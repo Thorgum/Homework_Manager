@@ -3,10 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Homework Manager</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Homework Manager</h1>
+<button onclick="loadData()">Load</button>
 
-    <h2>task one</h2>
+<h1>Homework Manager</h1>
+<div id="mainTaskSection">
+    <label><b>Main Task</b></label>
+    <input type="text" name="task" id="mainTask">
+    <input type="date" name="due" id="dueDate">
+    <button onclick="addMainTask()">Add Main Task</button>
+</div>
+
+<div id="subTaskSection" style="display: none;">
+    <h2>Task One</h2> <!-- Header of Task One -->
+    <label><b>Sub Task</b></label>
+    <input type="text" name="subtask" id="subTask">
+    <input type="date" name="subtaskDate" id="subTaskDate">
+    <button onclick="addSubTask()">Add Sub Task</button>
+</div>
+
+<div id="output" style="display: none;">
+    <p id="taskOutput"></p>
+    <ul id="subtasks"></ul>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
