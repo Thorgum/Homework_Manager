@@ -1,35 +1,49 @@
 document.addEventListener("DOMContentLoaded", function() {
+    // Retrieve loadClicked from local storage
+    var loadClicked = localStorage.getItem('loadClicked');
+
     // Clear local storage if Load button wasn't pressed
-    if (!localStorage.getItem('loadClicked')) {
-        localStorage.removeItem('mainTask');
-        localStorage.removeItem('dueDate');
-        localStorage.removeItem('subtasks');
+    if (loadClicked !== 'true') {
+        console.log("Load click false");
+        localStorage.clear();
     }
+
+    // Call loadData function
+    loadData();
 });
 
 function loadData() {
     // Set flag indicating Load button was clicked
-    localStorage.setItem('loadClicked', true);
+    localStorage.setItem('loadClicked', 'true');
 
-    // Retrieve main task and subtasks from local storage
-    var mainTask = localStorage.getItem('mainTask');
-    var dueDate = localStorage.getItem('dueDate');
-    var subtasks = localStorage.getItem('subtasks');
+    // Retrieve tasks from local storage
+    var tasks = localStorage.getItem('tasks');
 
-    // Display main task and subtasks
-    if (mainTask && dueDate) {
-        displayMainTask(mainTask, dueDate);
-    }
-    if (subtasks) {
-        displaySubtasks(subtasks);
+    // Display tasks
+    if (tasks) {
+        var tasksArray = tasks.split(';');
+        tasksArray.forEach(function(taskString) {
+            var taskParts = taskString.split(',');
+            var mainTask = taskParts[0];
+            var dueDate = taskParts[1];
+            var subtasks = taskParts.slice(2).join(',');
+            displayTask(mainTask, dueDate, subtasks);
+        });
     }
 
     // Show relevant sections
+    var mainTaskSection = document.getElementById('mainTaskSection');
+    var subTaskButton = document.getElementById('addSubTaskButton');
+
+    if (mainTaskSection.children.length > 0) {
+        subTaskButton.style.display = 'block';
+    } else {
+        subTaskButton.style.display = 'none';
+    }
+
     document.getElementById('subTaskSection').style.display = 'block';
     document.getElementById('output').style.display = 'block';
-    document.getElementById('mainTaskSection').style.display = 'none';
-    document.getElementById('subTaskSection').style.display = 'block'; // Ensure subtask section is shown
-    document.getElementById('output').style.display = 'block'; // Ensure output section is shown
+    document.getElementById('mainTaskSection').style.display = 'block'; // Make sure mainTaskSection is visible
 }
 
 function addMainTask() {
@@ -37,7 +51,7 @@ function addMainTask() {
     var dueDate = document.getElementById('dueDate').value;
 
     // Display main task
-    displayMainTask(mainTask, dueDate);
+    displayTask(mainTask, dueDate);
 
     // Show subtask input section
     document.getElementById('subTaskSection').style.display = 'block';
@@ -47,8 +61,9 @@ function addMainTask() {
     document.getElementById('mainTaskSection').style.display = 'none';
 
     // Save main task to local storage
-    localStorage.setItem('mainTask', mainTask);
-    localStorage.setItem('dueDate', dueDate);
+    var tasks = localStorage.getItem('tasks') || '';
+    tasks += mainTask + ',' + dueDate + ';';
+    localStorage.setItem('tasks', tasks);
 }
 
 function addSubTask() {
@@ -57,7 +72,7 @@ function addSubTask() {
     var subtasksList = document.getElementById('subtasks');
 
     // Add subtask to the list
-    subtasksList.innerHTML += "<li>Sub Task: " + subTask + ", Date: " + subTaskDate + "</li>";
+    subtasksList.innerHTML += "<li>Sub Task: " + subTask + ", Due: " + subTaskDate + "</li>";
 
     // Save subtask to local storage
     var subtasks = localStorage.getItem('subtasks') || '';
@@ -65,18 +80,24 @@ function addSubTask() {
     localStorage.setItem('subtasks', subtasks);
 }
 
-function displayMainTask(mainTask, dueDate) {
-    var taskOutput = document.getElementById('taskOutput');
-    taskOutput.innerHTML = "Main Task: " + mainTask + ", Due Date: " + dueDate;
-}
+function displayTask(mainTask, dueDate, subtasks) {
+    var taskOutputs = document.getElementById('taskOutputs');
 
-function displaySubtasks(subtasks) {
-    var subtasksList = document.getElementById('subtasks');
-    subtasksList.innerHTML = ''; // Clear previous subtasks
-    var subtasksArray = subtasks.split('\n');
-    subtasksArray.forEach(function(subtask) {
-        if (subtask.trim() !== '') {
-            subtasksList.innerHTML += "<li>" + subtask + "</li>";
-        }
-    });
+    // Create task output element
+    var taskOutput = "<div class='taskOutput'><p>Main Task: " + mainTask + ", Due Date: " + dueDate + "</p><ul class='subtasks'>";
+
+    // Display subtasks if they exist
+    if (subtasks) {
+        var subtasksArray = subtasks.split('\n');
+        subtasksArray.forEach(function(subtask) {
+            if (subtask.trim() !== '') {
+                taskOutput += "<li>" + subtask + "</li>";
+            }
+        });
+    }
+
+    taskOutput += "</ul></div>";
+
+    // Display task output
+    taskOutputs.innerHTML += taskOutput;
 }
