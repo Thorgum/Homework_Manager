@@ -1,103 +1,97 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Retrieve loadClicked from local storage
     var loadClicked = localStorage.getItem('loadClicked');
+    console.log("loadClicked:", loadClicked);
 
-    // Clear local storage if Load button wasn't pressed
-    if (loadClicked !== 'true') {
-        console.log("Load click false");
+    // Clear local storage if Load button wasn't clicked
+    if (!loadClicked || loadClicked !== 'true') {
+        console.log("Clearing local storage...");
         localStorage.clear();
     }
-
-    // Call loadData function
-    loadData();
 });
 
 function loadData() {
     // Set flag indicating Load button was clicked
     localStorage.setItem('loadClicked', 'true');
 
-    // Retrieve tasks from local storage
-    var tasks = localStorage.getItem('tasks');
-
-    // Display tasks
-    if (tasks) {
-        var tasksArray = tasks.split(';');
-        tasksArray.forEach(function(taskString) {
-            var taskParts = taskString.split(',');
-            var mainTask = taskParts[0];
-            var dueDate = taskParts[1];
-            var subtasks = taskParts.slice(2).join(',');
-            displayTask(mainTask, dueDate, subtasks);
-        });
-    }
-
-    // Show relevant sections
-    var mainTaskSection = document.getElementById('mainTaskSection');
-    var subTaskButton = document.getElementById('addSubTaskButton');
-
-    if (mainTaskSection.children.length > 0) {
-        subTaskButton.style.display = 'block';
-    } else {
-        subTaskButton.style.display = 'none';
-    }
-
-    document.getElementById('subTaskSection').style.display = 'block';
-    document.getElementById('output').style.display = 'block';
-    document.getElementById('mainTaskSection').style.display = 'block'; // Make sure mainTaskSection is visible
+    // Your existing code...
 }
 
 function addMainTask() {
     var mainTask = document.getElementById('mainTask').value;
     var dueDate = document.getElementById('dueDate').value;
 
-    // Display main task
-    displayTask(mainTask, dueDate);
+    // Debugging
+    console.log("Adding Main Task:", mainTask);
+    console.log("Due Date:", dueDate);
 
-    // Show subtask input section
-    document.getElementById('subTaskSection').style.display = 'block';
-    document.getElementById('output').style.display = 'block';
-
-    // Hide main task input section
-    document.getElementById('mainTaskSection').style.display = 'none';
+    // Increment main tasks count
+    var mainTasksCount = localStorage.getItem('mainTasksCount') || 0;
+    mainTasksCount++;
+    localStorage.setItem('mainTasksCount', mainTasksCount);
 
     // Save main task to local storage
-    var tasks = localStorage.getItem('tasks') || '';
-    tasks += mainTask + ',' + dueDate + ';';
-    localStorage.setItem('tasks', tasks);
+    localStorage.setItem('mainTask_' + (mainTasksCount - 1), mainTask);
+    localStorage.setItem('dueDate_' + (mainTasksCount - 1), dueDate);
+
+    // Call displayMainTask to show the newly added main task
+    displayMainTask(mainTask, dueDate, mainTasksCount - 1);
 }
 
-function addSubTask() {
-    var subTask = document.getElementById('subTask').value;
-    var subTaskDate = document.getElementById('subTaskDate').value;
-    var subtasksList = document.getElementById('subtasks');
+function addSubTask(taskIndex) {
+    var subTask = document.getElementById('subTask_' + taskIndex).value;
+    var subTaskDate = document.getElementById('subTaskDate_' + taskIndex).value;
 
-    // Add subtask to the list
-    subtasksList.innerHTML += "<li>Sub Task: " + subTask + ", Due: " + subTaskDate + "</li>";
+    // Increment subtasks count for the specified main task
+    var subtasksCount = localStorage.getItem('subtasksCount_' + taskIndex) || 0;
+    subtasksCount++;
+    localStorage.setItem('subtasksCount_' + taskIndex, subtasksCount);
 
     // Save subtask to local storage
-    var subtasks = localStorage.getItem('subtasks') || '';
-    subtasks += "Sub Task: " + subTask + ", Date: " + subTaskDate + '\n';
-    localStorage.setItem('subtasks', subtasks);
+    localStorage.setItem('subTask_' + taskIndex + '_' + (subtasksCount - 1), subTask);
+    localStorage.setItem('subTaskDate_' + taskIndex + '_' + (subtasksCount - 1), subTaskDate);
+
+    // Display the added subtask
+    displaySubtask(subTask, subTaskDate, taskIndex);
+
+    // Clear input fields
+    document.getElementById('subTask_' + taskIndex).value = '';
+    document.getElementById('subTaskDate_' + taskIndex).value = '';
 }
 
-function displayTask(mainTask, dueDate, subtasks) {
-    var taskOutputs = document.getElementById('taskOutputs');
+function displayMainTask(mainTask, dueDate, taskIndex) {
+    var output = document.getElementById('output');
 
-    // Create task output element
-    var taskOutput = "<div class='taskOutput'><p>Main Task: " + mainTask + ", Due Date: " + dueDate + "</p><ul class='subtasks'>";
+    // Create HTML for main task
+    var taskContainer = `
+        <div class="taskContainer">
+            <div class="mainTaskOutput">Main Task: ${mainTask}, Due Date: ${dueDate}</div>
+            
+            <!-- Subtask section -->
+            <div id="subTaskSection_${taskIndex}" class="subTaskSection">
+                <label><b>Sub Task</b></label>
+                <input type="text" name="subtask" id="subTask_${taskIndex}">
+                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}">
+                <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
+            </div>
+        </div>
+    `;
 
-    // Display subtasks if they exist
-    if (subtasks) {
-        var subtasksArray = subtasks.split('\n');
-        subtasksArray.forEach(function(subtask) {
-            if (subtask.trim() !== '') {
-                taskOutput += "<li>" + subtask + "</li>";
-            }
-        });
+    // Append the taskContainer to the output element
+    output.innerHTML += taskContainer;
+}
+
+function displaySubtask(subTask, subTaskDate, taskIndex) {
+    var subtasksList = document.getElementById('subTaskSection_' + taskIndex);
+    subtasksList.innerHTML += `<ul class="subtasks"><li>Sub Task: ${subTask}, Due: ${subTaskDate}</li></ul>`;
+}
+
+function showSubTaskSection(taskIndex) {
+    var subTaskSection = document.getElementById('subTaskSection_' + taskIndex);
+    if (subTaskSection) {
+        subTaskSection.style.display = 'block';
+        console.log("Subtask section shown for task index:", taskIndex);
+    } else {
+        console.error("Subtask section with id 'subTaskSection_" + taskIndex + "' not found!");
     }
-
-    taskOutput += "</ul></div>";
-
-    // Display task output
-    taskOutputs.innerHTML += taskOutput;
 }

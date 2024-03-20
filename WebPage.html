@@ -9,6 +9,7 @@
 <button onclick="loadData()">Load</button>
 
 <h1>Homework Manager</h1>
+
 <div id="mainTaskSection">
     <label>Task:</label>
     <input type="text" id="mainTask">
@@ -17,18 +18,7 @@
     <button onclick="addMainTask()">Add Main Task</button>
 </div>
 
-<div id="subTaskSection" style="display: none;">
-    <h2>Tasks</h2>
-    <label><b>Sub Task</b></label>
-    <input type="text" name="subtask" id="subTask">
-    <input type="date" name="subtaskDate" id="subTaskDate">
-    <button id="addSubTaskButton" onclick="addSubTask()">Add Sub Task</button>
-</div>
-
-<div id="output" style="display: none;">
-    <p id="taskOutput"></p>
-    <ul id="subtasks"></ul>
-</div>
+<div id="output"></div>
 
 <script src="app.js"></script>
 </body>
