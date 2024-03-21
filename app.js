@@ -9,12 +9,10 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.clear();
     }
 });
+
 function addMainTask() {
     var mainTask = document.getElementById('mainTask').value;
     var dueDate = document.getElementById('dueDate').value;
-    // Debugging
-    console.log("Adding Main Task:", mainTask);
-    console.log("Due Date:", dueDate);
 
     // Increment main tasks count
     var mainTasksCount = localStorage.getItem('mainTasksCount') || 0;
@@ -24,24 +22,49 @@ function addMainTask() {
     // Save main task to local storage
     localStorage.setItem('mainTask_' + (mainTasksCount - 1), mainTask);
     localStorage.setItem('dueDate_' + (mainTasksCount - 1), dueDate);
-    countdown(dueDate)
-    // Call displayMainTask to show the newly added main task
-    displayMainTask(mainTask, dueDate, mainTasksCount - 1);
+
+    // Call tasktimer with a callback to displayMainTask
+    tasktimer(dueDate, function(countdown) {
+        // Call displayMainTask to show the newly added main task
+        displayMainTask(mainTask, dueDate, mainTasksCount - 1, countdown);
+    });
 }
 
-function countdown(duedate) {
+function tasktimer(duedate, callback) {
     // Get the current date
-    today = new Date();
-    console.log(today)
-// Calculate the difference in days between today and Christmas
-    var one_day = 1000 * 60 * 60 * 24;
-    var due = new Date(duedate[0]+duedate[1]+duedate[2]+duedate[3],duedate[5]+duedate[6]-1,duedate[8]+duedate[9])
-// Log the number of days left until Christmas to the console
-    console.log(due)
-    var countdown = console.log(Math.ceil((  due.getTime() - today.getTime()) / (one_day)) +
-        " days left");
-    localStorage.setItem('countdown',countdown)
+    var today = new Date();
 
+    // Calculate the difference in days between today and the due date
+    var one_day = 1000 * 60 * 60 * 24;
+    var due = new Date(duedate);
+
+    // Calculate the countdown
+    var countdown = Math.ceil((due.getTime() - today.getTime()) / one_day);
+
+    // Call the callback with countdown
+    callback(countdown);
+}
+
+function displayMainTask(mainTask, dueDate, taskIndex, countdown) {
+    var output = document.getElementById('output');
+
+    // Create HTML for main task
+    var taskContainer = `
+        <div class="taskContainer">
+            <div class="mainTaskOutput">Main Task: ${mainTask}, Due Date: ${countdown} days left</div>
+            
+            <!-- Subtask section -->
+            <div id="subTaskSection_${taskIndex}" class="subTaskSection">
+                <label><b>Sub Task</b></label>
+                <input type="text" name="subtask" id="subTask_${taskIndex}">
+                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}">
+                <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
+            </div>
+        </div>
+    `;
+
+    // Append the taskContainer to the output element
+    output.innerHTML += taskContainer;
 }
 
 function addSubTask(taskIndex) {
@@ -63,28 +86,6 @@ function addSubTask(taskIndex) {
     // Clear input fields
     document.getElementById('subTask_' + taskIndex).value = '';
     document.getElementById('subTaskDate_' + taskIndex).value = '';
-}
-
-function displayMainTask(mainTask, dueDate, taskIndex,countdown) {
-    var output = document.getElementById('output');
-    console.log(countdown)
-    // Create HTML for main task
-    var taskContainer = `
-        <div class="taskContainer">
-            <div class="mainTaskOutput">Main Task: ${mainTask}, Due Date: ${countdown}</div>
-            
-            <!-- Subtask section -->
-            <div id="subTaskSection_${taskIndex}" class="subTaskSection">
-                <label><b>Sub Task</b></label>
-                <input type="text" name="subtask" id="subTask_${taskIndex}">
-                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}">
-                <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
-            </div>
-        </div>
-    `;
-
-    // Append the taskContainer to the output element
-    output.innerHTML += taskContainer;
 }
 
 function displaySubtask(subTask, subTaskDate, taskIndex) {
