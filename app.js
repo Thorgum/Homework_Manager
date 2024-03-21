@@ -45,13 +45,27 @@ function tasktimer(duedate, callback) {
     callback(countdown);
 }
 
+function subtasktimer(subTaskDate, callback){
+    var today = new Date();
+
+    // Calculate the difference in days between today and the due date
+    var one_day = 1000 * 60 * 60 * 24;
+    var due = new Date(subTaskDate);
+
+    // Calculate the countdown
+    var subcountdown = Math.ceil((due.getTime() - today.getTime()) / one_day);
+
+    // Call the callback with subcountdown
+    callback(subcountdown);
+}
+
 function displayMainTask(mainTask, dueDate, taskIndex, countdown) {
     var output = document.getElementById('output');
 
     // Create HTML for main task
     var taskContainer = `
         <div class="taskContainer">
-            <div class="mainTaskOutput">Main Task: ${mainTask}, Due Date: ${countdown} days left</div>
+            <div class="mainTaskOutput">Main Task: ${mainTask}, Time Remaining: ${countdown} days left</div>
             
             <!-- Subtask section -->
             <div id="subTaskSection_${taskIndex}" class="subTaskSection">
@@ -71,26 +85,29 @@ function addSubTask(taskIndex) {
     var subTask = document.getElementById('subTask_' + taskIndex).value;
     var subTaskDate = document.getElementById('subTaskDate_' + taskIndex).value;
 
-    // Increment subtasks count for the specified main task
-    var subtasksCount = localStorage.getItem('subtasksCount_' + taskIndex) || 0;
-    subtasksCount++;
-    localStorage.setItem('subtasksCount_' + taskIndex, subtasksCount);
+    // Call subtasktimer with a callback to add the subtask
+    subtasktimer(subTaskDate, function(subcountdown) {
+        // Increment subtasks count for the specified main task
+        var subtasksCount = localStorage.getItem('subtasksCount_' + taskIndex) || 0;
+        subtasksCount++;
+        localStorage.setItem('subtasksCount_' + taskIndex, subtasksCount);
 
-    // Save subtask to local storage
-    localStorage.setItem('subTask_' + taskIndex + '_' + (subtasksCount - 1), subTask);
-    localStorage.setItem('subTaskDate_' + taskIndex + '_' + (subtasksCount - 1), subTaskDate);
+        // Save subtask to local storage
+        localStorage.setItem('subTask_' + taskIndex + '_' + (subtasksCount - 1), subTask);
+        localStorage.setItem('subTaskDate_' + taskIndex + '_' + (subtasksCount - 1), subTaskDate);
 
-    // Display the added subtask
-    displaySubtask(subTask, subTaskDate, taskIndex);
+        // Display the added subtask
+        displaySubtask(subTask, subcountdown, taskIndex);
 
-    // Clear input fields
-    document.getElementById('subTask_' + taskIndex).value = '';
-    document.getElementById('subTaskDate_' + taskIndex).value = '';
+        // Clear input fields
+        document.getElementById('subTask_' + taskIndex).value = '';
+        document.getElementById('subTaskDate_' + taskIndex).value = '';
+    });
 }
 
-function displaySubtask(subTask, subTaskDate, taskIndex) {
+function displaySubtask(subTask, subcountdown, taskIndex) {
     var subtasksList = document.getElementById('subTaskSection_' + taskIndex);
-    subtasksList.innerHTML += `<ul class="subtasks"><li>Sub Task: ${subTask}, Due: ${subTaskDate}</li></ul>`;
+    subtasksList.innerHTML += `<ul class="subtasks"><li>Sub Task: ${subTask}, Time Remaining: ${subcountdown} days left</li></ul>`;
 }
 
 function showSubTaskSection(taskIndex) {
