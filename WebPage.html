@@ -6,19 +6,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<button onclick="loadData()">Load</button>
 
 <h1>Homework Manager</h1>
 
-<div id="mainTaskSection">
-    <label>Task:</label>
-    <input type="text" id="mainTask">
-    <label>Due Date:</label>
-    <input type="date" id="dueDate">
-    <button onclick="addMainTask()">Add Main Task</button>
-</div>
+<div class="container">
+    <div id="mainTaskSection">
+        <label>Task:</label>
+        <input type="text" id="mainTask">
+        <label>Due Date:</label>
+        <input type="date" id="dueDate">
+        <button onclick="addMainTask()">Add Main Task</button>
+    </div>
 
-<div id="output"></div>
+    <button class="deleteButton" onclick="deleteAllData()">Delete All Data</button>
+
+    <div id="taskListContainer">
+        <!-- Task list will be appended here -->
+    </div>
+</div>
 
 <script src="app.js"></script>
 </body>

@@ -1,121 +1,186 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Retrieve loadClicked from local storage
-    var loadClicked = localStorage.getItem('loadClicked');
-    console.log("loadClicked:", loadClicked);
-
-    // Clear local storage if Load button wasn't clicked
-    if (!loadClicked || loadClicked !== 'false') {
-        console.log("Clearing local storage...");
-        localStorage.clear();
-    }
+    renderTasks();
 });
 
 function addMainTask() {
     var mainTask = document.getElementById('mainTask').value;
     var dueDate = document.getElementById('dueDate').value;
 
-    // Increment main tasks count
-    var mainTasksCount = localStorage.getItem('mainTasksCount') || 0;
-    mainTasksCount++;
-    localStorage.setItem('mainTasksCount', mainTasksCount);
+    var task = {
+        mainTask: mainTask,
+        dueDate: dueDate,
+        subTasks: []
+    };
 
-    // Save main task to local storage
-    localStorage.setItem('mainTask_' + (mainTasksCount - 1), mainTask);
-    localStorage.setItem('dueDate_' + (mainTasksCount - 1), dueDate);
-
-    // Call tasktimer with a callback to displayMainTask
-    tasktimer(dueDate, function(countdown) {
-        // Call displayMainTask to show the newly added main task
-        displayMainTask(mainTask, dueDate, mainTasksCount - 1, countdown);
-    });
-}
-
-function tasktimer(duedate, callback) {
-    // Get the current date
-    var today = new Date();
-
-    // Calculate the difference in days between today and the due date
-    var one_day = 1000 * 60 * 60 * 24;
-    var due = new Date(duedate);
-
-    // Calculate the countdown
-    var countdown = Math.ceil((due.getTime() - today.getTime()) / one_day);
-
-    // Call the callback with countdown
-    callback(countdown);
-}
-
-function subtasktimer(subTaskDate, callback){
-    var today = new Date();
-
-    // Calculate the difference in days between today and the due date
-    var one_day = 1000 * 60 * 60 * 24;
-    var due = new Date(subTaskDate);
-
-    // Calculate the countdown
-    var subcountdown = Math.ceil((due.getTime() - today.getTime()) / one_day);
-
-    // Call the callback with subcountdown
-    callback(subcountdown);
-}
-
-function displayMainTask(mainTask, dueDate, taskIndex, countdown) {
-    var output = document.getElementById('output');
-
-    // Create HTML for main task
-    var taskContainer = `
-        <div class="taskContainer">
-            <div class="mainTaskOutput">Main Task: ${mainTask}, Time Remaining: ${countdown} days left</div>
-            
-            <!-- Subtask section -->
-            <div id="subTaskSection_${taskIndex}" class="subTaskSection">
-                <label><b>Sub Task</b></label>
-                <input type="text" name="subtask" id="subTask_${taskIndex}">
-                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}">
-                <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
-            </div>
-        </div>
-    `;
-
-    // Append the taskContainer to the output element
-    output.innerHTML += taskContainer;
+    addCookie("task_" + getCookie("taskCount"), JSON.stringify(task));
+    incrementCookie("taskCount");
+    renderTasks();
 }
 
 function addSubTask(taskIndex) {
     var subTask = document.getElementById('subTask_' + taskIndex).value;
     var subTaskDate = document.getElementById('subTaskDate_' + taskIndex).value;
 
-    // Call subtasktimer with a callback to add the subtask
-    subtasktimer(subTaskDate, function(subcountdown) {
-        // Increment subtasks count for the specified main task
-        var subtasksCount = localStorage.getItem('subtasksCount_' + taskIndex) || 0;
-        subtasksCount++;
-        localStorage.setItem('subtasksCount_' + taskIndex, subtasksCount);
+    var subTaskObj = {
+        subTask: subTask,
+        subTaskDate: subTaskDate
+    };
 
-        // Save subtask to local storage
-        localStorage.setItem('subTask_' + taskIndex + '_' + (subtasksCount - 1), subTask);
-        localStorage.setItem('subTaskDate_' + taskIndex + '_' + (subtasksCount - 1), subTaskDate);
-
-        // Display the added subtask
-        displaySubtask(subTask, subcountdown, taskIndex);
-
-        // Clear input fields
-        document.getElementById('subTask_' + taskIndex).value = '';
-        document.getElementById('subTaskDate_' + taskIndex).value = '';
-    });
+    addCookie("subTask_" + taskIndex + "_" + getCookie("subTaskCount_" + taskIndex), JSON.stringify(subTaskObj));
+    incrementCookie("subTaskCount_" + taskIndex);
+    renderTasks();
 }
 
-function displaySubtask(subTask, subcountdown, taskIndex) {
+function displayMainTask(task, taskIndex) {
+    var taskListContainer = document.getElementById('taskListContainer');
+
+    var taskContainer = document.createElement('div');
+    taskContainer.id = 'taskContainer_' + taskIndex;
+    taskContainer.className = 'taskContainer';
+
+    var countdown = getCountdown(task.dueDate);
+
+    taskContainer.innerHTML = `
+        <div class="mainTaskOutput">Main Task: ${task.mainTask}, Due Date: ${task.dueDate}, Time Remaining: ${countdown} days left</div>
+        <button class="removeButton" onclick="removeMainTask(${taskIndex})">Remove</button>
+        <div id="subTaskSection_${taskIndex}" class="subTaskSection">
+            <label><b>Sub Task</b></label>
+            <input type="text" name="subtask" id="subTask_${taskIndex}">
+            <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}">
+            <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
+        </div>
+    `;
+
+    taskListContainer.appendChild(taskContainer);
+}
+
+function displaySubtask(subTaskObj, taskIndex, subtaskIndex) {
     var subtasksList = document.getElementById('subTaskSection_' + taskIndex);
-    subtasksList.innerHTML += `<ul class="subtasks"><li>Sub Task: ${subTask}, Time Remaining: ${subcountdown} days left</li></ul>`;
+    var countdown = getCountdown(subTaskObj.subTaskDate);
+    var subtaskContainer = document.createElement('ul');
+    subtaskContainer.id = 'subTaskSection_' + taskIndex + '_' + subtaskIndex;
+    subtaskContainer.className = 'subtasks';
+
+    subtaskContainer.innerHTML = `
+        <li>Sub Task: ${subTaskObj.subTask}, Due Date: ${subTaskObj.subTaskDate}, Time Remaining: ${countdown} days left
+            <button class="removeButton" onclick="removeSubTask(${taskIndex}, ${subtaskIndex})">Remove</button>
+        </li>
+    `;
+
+    subtasksList.appendChild(subtaskContainer);
 }
 
-function showSubTaskSection(taskIndex) {
-    var subTaskSection = document.getElementById('subTaskSection_' + taskIndex);
-    if (subTaskSection) {
-        subTaskSection.style.display = 'block';
-        console.log("Subtask section shown for task index:", taskIndex);
-    } else {
-        console.error("Subtask section with id 'subTaskSection_" + taskIndex + "' not found!");
+function getCountdown(dueDate) {
+    var today = new Date();
+    var oneDay = 1000 * 60 * 60 * 24;
+    var due = new Date(dueDate);
+    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay);
+    return countdown;
+}
+
+function removeMainTask(taskIndex) {
+    deleteCookie("task_" + taskIndex);
+
+    // Remove the task element from the DOM
+    var taskContainer = document.getElementById('taskContainer_' + taskIndex);
+    if (taskContainer) {
+        taskContainer.remove();
     }
+
+    renderTasks(); // Render tasks after removal
+}
+
+function removeSubTask(taskIndex, subtaskIndex) {
+    deleteCookie("subTask_" + taskIndex + "_" + subtaskIndex);
+
+    // Remove the subtask element from the DOM
+    var subtaskList = document.getElementById('subTaskSection_' + taskIndex + '_' + subtaskIndex);
+    if (subtaskList) {
+        subtaskList.remove();
+    }
+
+    renderTasks(); // Render tasks after removal
+}
+
+function renderTasks() {
+    var taskListContainer = document.getElementById('taskListContainer');
+    taskListContainer.innerHTML = '';
+
+    var tasks = [];
+    var taskCount = getCookie("taskCount");
+    for (var i = 0; i < taskCount; i++) {
+        var task = getCookie("task_" + i);
+        if (task) {
+            tasks.push(JSON.parse(task));
+        }
+    }
+
+    // Sort tasks based on countdown value
+    tasks.sort(function(a, b) {
+        var countdownA = getCountdown(a.dueDate);
+        var countdownB = getCountdown(b.dueDate);
+        return countdownA - countdownB;
+    });
+
+    for (var j = 0; j < tasks.length; j++) {
+        displayMainTask(tasks[j], j);
+
+        // Collect subtasks of the current task
+        var subtasks = [];
+        var subTaskCount = getCookie("subTaskCount_" + j);
+        for (var k = 0; k < subTaskCount; k++) {
+            var subTask = getCookie("subTask_" + j + "_" + k);
+            if (subTask) {
+                subtasks.push(JSON.parse(subTask));
+            }
+        }
+
+        // Sort subtasks based on countdown value
+        subtasks.sort(function(a, b) {
+            var countdownA = getCountdown(a.subTaskDate);
+            var countdownB = getCountdown(b.subTaskDate);
+            return countdownA - countdownB;
+        });
+
+        // Display sorted subtasks
+        for (var l = 0; l < subtasks.length; l++) {
+            displaySubtask(subtasks[l], j, l);
+        }
+    }
+}
+
+
+function addCookie(name, value) {
+    document.cookie = name + "=" + value + "; path=/";
+}
+
+function getCookie(name) {
+    var cookies = document.cookie.split("; ");
+    for (var i = 0; i < cookies.length; i++) {
+        var cookiePair = cookies[i].split("=");
+        if (name === cookiePair[0]) {
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    return null;
+}
+
+function incrementCookie(name) {
+    var value = parseInt(getCookie(name)) || 0;
+    addCookie(name, value + 1);
+}
+
+function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
+function deleteAllData() {
+    // Clear all cookies
+    var cookies = document.cookie.split("; ");
+    for (var i = 0; i < cookies.length; i++) {
+        var cookiePair = cookies[i].split("=");
+        document.cookie = cookiePair[0] + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
+    // Refresh the page to clear the rendered tasks
+    location.reload();
 }
