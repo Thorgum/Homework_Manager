@@ -64,10 +64,10 @@ h1 {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Two columns */
     gap: 20px;
-    padding: 10px; /* Add padding on the edges */
+    padding: 10px;
     overflow-y: auto; /* Add vertical scroll bar when necessary */
-    max-width: 100%; /* Limit width to fit the container */
-    max-height: 500px; /* Adjust max height of the task list container */
+    max-width: 100%;
+    max-height: 500px;
 }
 
 
@@ -85,7 +85,7 @@ h1 {
 }
 
 .subTaskSection {
-    margin-top: auto; /* Pushes the subtask section to the bottom */
+    margin-bottom: auto; /* Pushes the subtask section to the top of tasks */
 }
 
 .subtasks {
@@ -111,5 +111,5 @@ h1 {
     border-radius: 5px; /* Rounded edges */
     display: inline; /* Display inline with the text */
     vertical-align: middle; /* Align vertically with the text */
-    margin-left: 5px; /* Add some space to separate the button from the text */
+    margin-left: 5px;
 }

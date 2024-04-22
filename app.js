@@ -103,9 +103,9 @@ function renderTasks() {
 
 function getCountdown(dueDate) {
     var today = new Date();
-    var oneDay = 1000 * 60 * 60 * 24;
+    var oneDay = 1000 * 60 * 60 * 24; // seconds in one day
     var due = new Date(dueDate);
-    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay);
+    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay); // gettime() converts it to seconds
     return countdown;
     renderTasks();
 }
