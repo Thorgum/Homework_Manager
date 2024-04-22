@@ -1,46 +1,37 @@
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f8ff;
     margin: 0;
-    padding: 0;
+    padding: 30px;
+    display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    padding-left: 175px;
-}
-.deleteButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 12px;
-    cursor: pointer;
+    height: 100vh; /* Full height of the viewport */
 }
 
 .container {
-    position: relative;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 90%; /* Limit container width to 90% of viewport width */
+    width: 100%; /* Ensure container fills the available width */
+    margin: 40px; /* Add margin to prevent the container from sticking to the edges */
+    box-sizing: border-box; /* Include padding and border in total width/height */
 }
+
+head {
+    margin: 40px;
+}
+
 
 h1 {
     text-align: center;
-    padding-top: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
-
 
 #mainTaskSection {
     margin-bottom: 20px;
-
 }
 
 #mainTaskSection label {
@@ -69,12 +60,24 @@ h1 {
 #mainTaskSection button:hover {
     background-color: #0056b3;
 }
+.taskListContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 20px;
+    padding: 10px; /* Add padding on the edges */
+    overflow-y: auto; /* Add vertical scroll bar when necessary */
+    max-width: 100%; /* Limit width to fit the container */
+    max-height: 500px; /* Adjust max height of the task list container */
+}
+
 
 .taskContainer {
-    margin-bottom: 20px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .mainTaskOutput {
@@ -82,20 +85,7 @@ h1 {
 }
 
 .subTaskSection {
-    margin-top: 10px;
-}
-
-.subTaskSection label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.subTaskSection input {
-    width: calc(100% - 20px);
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    margin-top: auto; /* Pushes the subtask section to the bottom */
 }
 
 .subtasks {
@@ -112,19 +102,14 @@ h1 {
 .subtasks li:last-child {
     border-bottom: none;
 }
-
-.taskColumn {
-    display: inline-block;
-    margin-right: 20px;
-    vertical-align: top;
-    width: calc(50% - 20px); /* Adjust column width */
-}
-
 .removeButton {
     background-color: red;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 3px 6px; /* Adjust padding for a smaller button */
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 5px; /* Rounded edges */
+    display: inline; /* Display inline with the text */
+    vertical-align: middle; /* Align vertically with the text */
+    margin-left: 5px; /* Add some space to separate the button from the text */
 }
