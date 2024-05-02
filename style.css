@@ -14,7 +14,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    max-width: 90%; /* Limit container width to 90% of viewport width */
+    max-width: 90%;
     width: 100%; /* Ensure container fills the available width */
     margin: 40px; /* Add margin to prevent the container from sticking to the edges */
     box-sizing: border-box; /* Include padding and border in total width/height */
@@ -50,15 +50,15 @@ h1 {
 #mainTaskSection button {
     width: calc(100% - 20px);
     padding: 10px;
-    background-color: #007bff;
-    color: #fff;
+    background-color: #007bff; /* light blue */
+    color: #fff; /* white */
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
 #mainTaskSection button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3;  /* darker blue */
 }
 .taskListContainer {
     display: grid;
@@ -73,7 +73,7 @@ h1 {
 
 .taskContainer {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ccc;  /* light gray border */
     border-radius: 5px;
     height: 100%;
     display: flex;
@@ -106,10 +106,10 @@ h1 {
     background-color: red;
     color: white;
     border: none;
-    padding: 3px 6px; /* Adjust padding for a smaller button */
+    padding: 3px 6px;
     cursor: pointer;
     border-radius: 5px; /* Rounded edges */
-    display: inline; /* Display inline with the text */
-    vertical-align: middle; /* Align vertically with the text */
+    display: inline;
+    vertical-align: middle;
     margin-left: 5px;
 }

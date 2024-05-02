@@ -24,7 +24,7 @@ function addSubTask(taskIndex) {
     var subTask = document.getElementById('subTask_' + taskIndex).value;
     var subTaskDate = document.getElementById('subTaskDate_' + taskIndex).value;
 
-    var subTaskObj = {
+    var subTaskObj = { //defining record
         subTask: subTask,
         subTaskDate: subTaskDate
     };
@@ -34,12 +34,12 @@ function addSubTask(taskIndex) {
 }
 
 function removeMainTask(taskIndex) {
-    tasks.splice(taskIndex, 1);
+    tasks.splice(taskIndex, 1); //deleting the one in the array in the taskindex position
     renderTasks();
 }
 
 function removeSubTask(taskIndex, subtaskIndex) {
-    tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
+    tasks[taskIndex].subTasks.splice(subtaskIndex, 1); //deleting the one in the array in the subtaskindex position
     renderTasks();
 }
 
@@ -49,7 +49,7 @@ function renderTasks() {
     taskListContainer.classList.add('taskListContainer');
 
     // Sort tasks based on countdown value
-    tasks.sort(function(a, b) {
+    tasks.sort(function(a, b) {  //sorting the tasks from lowest countdown to greatest
         var countdownA = getCountdown(a.dueDate);
         var countdownB = getCountdown(b.dueDate);
         return countdownA - countdownB;
