@@ -105,9 +105,8 @@ function getCountdown(dueDate) {
     var today = new Date();
     var oneDay = 1000 * 60 * 60 * 24; // seconds in one day
     var due = new Date(dueDate);
-    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay); // gettime() converts it to seconds
+    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay); // gettime() converts it to milliseconds since 1 January 1970
     return countdown;
-    renderTasks();
 }
 
 function deleteAllData() {
