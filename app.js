@@ -1,15 +1,27 @@
 document.addEventListener("DOMContentLoaded", function() {
+    loadTasks();
     renderTasks();
 });
 
 // Define arrays to hold tasks and subtasks
 var tasks = [];
-var subtasks = [];
+
+// Function to save tasks to local storage
+function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+    // Function to load tasks from local storage
+function loadTasks() {
+    var storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+        tasks = JSON.parse(storedTasks);
+    }
+}
 
 function addMainTask() {
     var mainTask = document.getElementById('mainTask').value;
     var dueDate = document.getElementById('dueDate').value;
-
     var task = {
         mainTask: mainTask,
         dueDate: dueDate,
@@ -17,6 +29,7 @@ function addMainTask() {
     };
 
     tasks.push(task);
+    saveTasks();
     renderTasks();
 }
 
@@ -24,22 +37,25 @@ function addSubTask(taskIndex) {
     var subTask = document.getElementById('subTask_' + taskIndex).value;
     var subTaskDate = document.getElementById('subTaskDate_' + taskIndex).value;
 
-    var subTaskObj = { //defining record
+    var subTaskObj = {
         subTask: subTask,
         subTaskDate: subTaskDate
     };
 
     tasks[taskIndex].subTasks.push(subTaskObj);
+    saveTasks();
     renderTasks();
 }
 
 function removeMainTask(taskIndex) {
-    tasks.splice(taskIndex, 1); //deleting the one in the array in the taskindex position
+    tasks.splice(taskIndex, 1);
+    saveTasks();
     renderTasks();
 }
 
 function removeSubTask(taskIndex, subtaskIndex) {
-    tasks[taskIndex].subTasks.splice(subtaskIndex, 1); //deleting the one in the array in the subtaskindex position
+    tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
+    saveTasks();
     renderTasks();
 }
 
@@ -48,8 +64,7 @@ function renderTasks() {
     taskListContainer.innerHTML = '';
     taskListContainer.classList.add('taskListContainer');
 
-    // Sort tasks based on countdown value
-    tasks.sort(function(a, b) {  //sorting the tasks from lowest countdown to greatest
+    tasks.sort(function(a, b) {
         var countdownA = getCountdown(a.dueDate);
         var countdownB = getCountdown(b.dueDate);
         return countdownA - countdownB;
@@ -76,7 +91,6 @@ function renderTasks() {
 
         var subtasksList = document.getElementById('subTaskSection_' + taskIndex);
 
-        // Sort subtasks based on countdown value
         task.subTasks.sort(function(a, b) {
             var countdownA = getCountdown(a.subTaskDate);
             var countdownB = getCountdown(b.subTaskDate);
@@ -100,22 +114,16 @@ function renderTasks() {
     });
 }
 
-
 function getCountdown(dueDate) {
     var today = new Date();
-    var oneDay = 1000 * 60 * 60 * 24; // seconds in one day
+    var oneDay = 1000 * 60 * 60 * 24;
     var due = new Date(dueDate);
-    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay); // gettime() converts it to milliseconds since 1 January 1970
+    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay);
     return countdown;
 }
 
 function deleteAllData() {
-    // Clear tasks and subtasks arrays
     tasks = [];
-    subtasks = [];
-
-    // Clear the task list container in the DOM
-    var taskListContainer = document.getElementById('taskListContainer');
-    taskListContainer.innerHTML = '';
+    localStorage.removeItem('tasks');
     renderTasks();
 }
