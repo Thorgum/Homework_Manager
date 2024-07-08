@@ -11,8 +11,11 @@
     <div id="mainTaskSection">
         <label>Task:</label>
         <input type="text" id="mainTask">
-        <h1>Due Date:</h1>
-        <input type="date" id="dueDate">
+        <label>Due Date:</label>
+        <input type="date" id="dueDate" />
+        <script>
+            dueDate.min = new Date().toISOString().split("T")[0];
+        </script>
         <button onclick="addMainTask()">Add Main Task</button>
     </div>
 

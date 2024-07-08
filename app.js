@@ -36,7 +36,6 @@ function addMainTask() {
 function addSubTask(taskIndex) {
     var subTask = document.getElementById('subTask_' + taskIndex).value;
     var subTaskDate = document.getElementById('subTaskDate_' + taskIndex).value;
-
     var subTaskObj = {
         subTask: subTask,
         subTaskDate: subTaskDate
@@ -57,6 +56,18 @@ function removeSubTask(taskIndex, subtaskIndex) {
     tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
     saveTasks();
     renderTasks();
+}
+
+function disableDates (subTaskID) {
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2,'0');
+    var mm = String(today.getMonth() + 1).padStart(2,'0');
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+    console.log(today)
+    document.getElementById(subTaskID).setAttribute("min",today);
 }
 
 function renderTasks() {
@@ -82,7 +93,11 @@ function renderTasks() {
             <div id="subTaskSection_${taskIndex}" class="subTaskSection">
                 <label><b>Sub Task</b></label>
                 <input type="text" name="subtask" id="subTask_${taskIndex}">
-                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}">
+                <script>
+                
+                    
+                </script>
+                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}" onfocus=disableDates("subTaskDate_${taskIndex}")>
                 <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
             </div>
         `;
