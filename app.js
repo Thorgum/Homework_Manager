@@ -22,9 +22,11 @@ function loadTasks() {
 function addMainTask() {
     var mainTask = document.getElementById('mainTask').value;
     var dueDate = document.getElementById('dueDate').value;
+    var taskColor = document.getElementById('taskColor').value || "#ffffff"; // Default color to white if not specified
     var task = {
         mainTask: mainTask,
         dueDate: dueDate,
+        taskColor: taskColor,
         subTasks: []
     };
 
@@ -67,7 +69,6 @@ function disableDates(subTaskID) {
     today = yyyy + '-' + mm + '-' + dd;
     console.log(today);
     document.getElementById(subTaskID).setAttribute("min", today);
-    document.getElementById(subTaskID).setAttribute("max", today);
 }
 
 function renderTasks() {
@@ -84,6 +85,11 @@ function renderTasks() {
     tasks.forEach(function(task, taskIndex) {
         var taskContainer = document.createElement('div');
         taskContainer.className = 'taskContainer';
+        taskContainer.style.backgroundColor = task.taskColor; // Apply the selected color
+
+        // Set text color to white if the background color is not white
+        var textColor = task.taskColor && task.taskColor.toLowerCase() !== "#ffffff" ? "white" : "black";
+        taskContainer.style.color = textColor;
 
         var countdown = getCountdown(task.dueDate);
         var progressPercentage = getProgressPercentage(task.dueDate);

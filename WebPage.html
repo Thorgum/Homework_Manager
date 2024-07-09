@@ -2,30 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Homework Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
-    <h1>Homework Manager</h1>
+    <h1>Task Manager</h1>
+    <button class="deleteButton" onclick="deleteAllData()">Delete All Data</button>
     <div id="mainTaskSection">
-        <label>Task:</label>
+        <label for="mainTask">Main Task</label>
         <input type="text" id="mainTask">
-        <label>Due Date:</label>
-        <input type="date" id="dueDate" />
-        <script>
-            dueDate.min = new Date().toISOString().split("T")[0];
-        </script>
+        <label for="dueDate">Due Date</label>
+        <input type="date" id="dueDate">
+        <label for="taskColor">Task Color</label>
+        <input type="color" id="taskColor">
         <button onclick="addMainTask()">Add Main Task</button>
     </div>
-
-    <button class="deleteButton" onclick="deleteAllData()">Delete All Data</button>
-
-    <div id="taskListContainer">
-        <!-- Task list will be appended here -->
-    </div>
+    <div id="taskListContainer"></div>
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
