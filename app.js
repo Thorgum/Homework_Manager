@@ -11,7 +11,7 @@ function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-    // Function to load tasks from local storage
+// Function to load tasks from local storage
 function loadTasks() {
     var storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
@@ -58,16 +58,16 @@ function removeSubTask(taskIndex, subtaskIndex) {
     renderTasks();
 }
 
-function disableDates (subTaskID) {
-
+function disableDates(subTaskID) {
     var today = new Date();
-    var dd = String(today.getDate()).padStart(2,'0');
-    var mm = String(today.getMonth() + 1).padStart(2,'0');
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
 
     today = yyyy + '-' + mm + '-' + dd;
-    console.log(today)
-    document.getElementById(subTaskID).setAttribute("min",today);
+    console.log(today);
+    document.getElementById(subTaskID).setAttribute("min", today);
+    document.getElementById(subTaskID).setAttribute("max", today);
 }
 
 function renderTasks() {
@@ -86,17 +86,17 @@ function renderTasks() {
         taskContainer.className = 'taskContainer';
 
         var countdown = getCountdown(task.dueDate);
+        var progressPercentage = getProgressPercentage(task.dueDate);
 
         taskContainer.innerHTML = `
             <div class="mainTaskOutput">Main Task: ${task.mainTask}, Due Date: ${task.dueDate}, Time Remaining: ${countdown} days left</div>
-            <button class="removeButton" onclick="removeMainTask(${taskIndex})">Remove</button>
+            <div class="progressBarContainer">
+                <div class="progressBar" style="width: ${progressPercentage}%"></div>
+            </div>
+            <button class="mainTaskRemoveButton" onclick="removeMainTask(${taskIndex})">Remove</button>
             <div id="subTaskSection_${taskIndex}" class="subTaskSection">
                 <label><b>Sub Task</b></label>
                 <input type="text" name="subtask" id="subTask_${taskIndex}">
-                <script>
-                
-                    
-                </script>
                 <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}" onfocus=disableDates("subTaskDate_${taskIndex}")>
                 <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
             </div>
@@ -117,9 +117,13 @@ function renderTasks() {
             subtaskContainer.className = 'subtasks';
 
             var countdown = getCountdown(subTaskObj.subTaskDate);
+            var progressPercentage = getProgressPercentage(subTaskObj.subTaskDate);
 
             subtaskContainer.innerHTML = `
                 <li>Sub Task: ${subTaskObj.subTask}, Due Date: ${subTaskObj.subTaskDate}, Time Remaining: ${countdown} days left
+                    <div class="progressBarContainer">
+                        <div class="progressBar" style="width: ${progressPercentage}%"></div>
+                    </div>
                     <button class="removeButton" onclick="removeSubTask(${taskIndex}, ${subtaskIndex})">Remove</button>
                 </li>
             `;
@@ -137,8 +141,19 @@ function getCountdown(dueDate) {
     return countdown;
 }
 
+function getProgressPercentage(dueDate) {
+    var today = new Date();
+    var due = new Date(dueDate);
+    var totalDays = (due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    var daysPassed = (today.getTime() - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24);
+    var progress = Math.min((daysPassed / totalDays) * 100, 100);
+    return Math.max(progress, 0);
+}
+
 function deleteAllData() {
-    tasks = [];
-    localStorage.removeItem('tasks');
-    renderTasks();
+    if (confirm("Are you sure you want to delete all data?")) {
+        tasks = [];
+        localStorage.removeItem('tasks');
+        renderTasks();
+    }
 }
