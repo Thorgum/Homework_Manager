@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #BackButton {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #BackButton:hover {
+      background-color: #0056b3;
+    }
+
+    h2 {
+      color: #333;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    li {
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      margin-left: 470px;
+      display: inline-block; /* Allow the delete button to be on the same line */
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 3px;
+      max-width: 90%;
+      width: 100%;
+      margin: 1px; /* Adjust margin to move the container up */
+      box-sizing: border-box;
+      position: relative; /* Allow positioning of the delete button */
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Task Manager Help</h1>
+  <button id="BackButton" onclick="location.href='WebPage.html'">&#x2190;</button>
+  <div id="helpContent">
+    <p>Welcome to the Task Manager! Here is the online help that should assist you with any of your needs:</p>
+    <h2>How to add a main task?</h2>
+    <p>Type your intended task name in the text box, then input the date of task submission and pick a color if desired for the task.</p>
+
+    <h2>How to set the date?</h2>
+    <p>You can either click the calendar symbol on the right of the date box or manually type the date.</p>
+
+    <h2>How to set the color of a task?</h2>
+    <p>Click the button below the task color subheading and select your desired color.</p>
+
+    <h2>How to remove a task?</h2>
+    <p>Click the remove button in the top right of the task container.</p>
+
+    <h2>How to add a subtask?</h2>
+    <p>Fill in the details and click the "Add Sub Task" button. The same rules apply for entering the data as main tasks.</p>
+
+    <h2>How to delete all data?</h2>
+    <p>Click the button in the top right of the page; a pop-up will confirm if you want to delete all data.</p>
+
+    <h2>Other</h2>
+    <p>If you have any other questions, please email <a href="mailto:redmann@macstudent.com.au">redmann@macstudent.com.au</a> or see the video tutorial here.</p>
+  </div>
+</div>
+</body>
+</html>

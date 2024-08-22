@@ -143,3 +143,42 @@ h1 {
 .deleteButton:hover {
     background-color: #c82333;
 }
+
+.helpButton {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.helpButton:hover {
+    background-color: #0056b3;
+}
+
+#helpButton {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 30px;
+    height: 30px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#helpButton:hover {
+    background-color: #0056b3;
+}
+
