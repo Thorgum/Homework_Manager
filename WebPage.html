@@ -8,15 +8,27 @@
 </head>
 <body>
 <div class="container">
-    <button id="helpButton" onclick="location.href='help.html'">?</button>
+    <div class="tip">
+        <button id="helpButton" onclick="location.href='help.html'">?</button>
+        <span class="tiptext">Help</span>
+    </div>
     <h1>Task Manager</h1>
     <button class="deleteButton" onclick="deleteAllData()">Delete All Data</button>
     <div id="mainTaskSection">
-        <label for="mainTask">Main Task</label>
+        <div class="tooltip">
+            <label for="mainTask">Main Task</label>
+            <span class="tooltiptext">Enter the name of the task</span>
+        </div>
         <input type="text" id="mainTask">
-        <label for="dueDate">Due Date</label>
+        <div class="tooltip">
+            <label for="dueDate">Due Date</label>
+            <span class="tooltiptext">click the little calender on the right to enter date</span>
+        </div>
         <input type="date" id="dueDate">
-        <label for="taskColor">Task Color</label>
+        <div class="tooltip">
+            <label for="taskColor">Task Color</label>
+            <span class="tooltiptext">Click on bar to select a colour for the task. text will change to white if done</span>
+        </div>
         <input type="color" id="taskColor">
         <button onclick="addMainTask()">Add Main Task</button>
     </div>
