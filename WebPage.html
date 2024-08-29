@@ -24,12 +24,12 @@
             <label for="dueDate">Due Date</label>
             <span class="tooltiptext">click the little calender on the right to enter date</span>
         </div>
-        <input type="date" id="dueDate">
+        <input type="date" id="dueDate" onfocus=disableTaskDates("dueDate") required>
         <div class="tooltip">
             <label for="taskColor">Task Color</label>
             <span class="tooltiptext">Click on bar to select a colour for the task. text will change to white if done</span>
         </div>
-        <input type="color" id="taskColor">
+        <input type="color" id="taskColor" value="#ffffff">
         <button onclick="addMainTask()">Add Main Task</button>
     </div>
     <div id="taskListContainer"></div>

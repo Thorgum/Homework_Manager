@@ -23,6 +23,19 @@ function addMainTask() {
     var mainTask = document.getElementById('mainTask').value;
     var dueDate = document.getElementById('dueDate').value;
     var taskColor = document.getElementById('taskColor').value || "#ffffff"; // Default color to white if not specified
+
+    // Check if the due date is provided and valid
+    if (!dueDate) {
+        alert("Please select a due date.");
+        return;
+    }
+
+    var today = new Date().toISOString().split('T')[0];
+    if (dueDate < today) {
+        alert("Due date cannot be in the past.");
+        return;
+    }
+
     var task = {
         mainTask: mainTask,
         dueDate: dueDate,
@@ -30,7 +43,7 @@ function addMainTask() {
         subTasks: []
     };
 
-    tasks.push(task);
+    tasks.push(task); // Add to JSON file
     saveTasks();
     renderTasks();
 }
@@ -38,40 +51,67 @@ function addMainTask() {
 function addSubTask(taskIndex) {
     var subTask = document.getElementById('subTask_' + taskIndex).value;
     var subTaskDate = document.getElementById('subTaskDate_' + taskIndex).value;
+    var mainTaskDueDate = tasks[taskIndex].dueDate;
+
+    // Check if the subtask date is provided and valid
+    if (!subTaskDate) {
+        alert("Please select a due date for the subtask.");
+        return;
+    }
+
+    var today = new Date().toISOString().split('T')[0];
+    if (subTaskDate < today) {
+        alert("Subtask date cannot be in the past.");
+        return;
+    }
+
+    if (subTaskDate > mainTaskDueDate) {
+        alert("Subtask date cannot be later than the main task's due date.");
+        return;
+    }
+
     var subTaskObj = {
         subTask: subTask,
         subTaskDate: subTaskDate
     };
 
-    tasks[taskIndex].subTasks.push(subTaskObj);
+    tasks[taskIndex].subTasks.push(subTaskObj); // Add to JSON file
     saveTasks();
     renderTasks();
 }
 
 function removeMainTask(taskIndex) {
-    tasks.splice(taskIndex, 1);
+    tasks.splice(taskIndex, 1); // Removes the specific allocation for that task index
     saveTasks();
     renderTasks();
 }
 
 function removeSubTask(taskIndex, subtaskIndex) {
-    tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
+    tasks[taskIndex].subTasks.splice(subtaskIndex, 1); // Removes the specific allocation for that task index and subtask index
     saveTasks();
     renderTasks();
 }
 
-function disableDates(subTaskID) {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var yyyy = today.getFullYear();
+function disableDates(subTaskID, taskIndex) {
+    var today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    var mainTaskDueDate = tasks[taskIndex].dueDate;
 
-    today = yyyy + '-' + mm + '-' + dd;
-    console.log(today);
-    document.getElementById(subTaskID).setAttribute("min", today);
+    var subTaskDateInput = document.getElementById(subTaskID);
+    subTaskDateInput.setAttribute("min", today);
+
+    if (mainTaskDueDate) {
+        subTaskDateInput.setAttribute("max", mainTaskDueDate);
+    }
 }
 
-function renderTasks() {
+function disableTaskDates(TaskID) {
+    var today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+    var subTaskDateInput = document.getElementById(TaskID);
+    subTaskDateInput.setAttribute("min", today);
+}
+
+function renderTasks() {  // Display the info within the file tasks
     var taskListContainer = document.getElementById('taskListContainer');
     taskListContainer.innerHTML = '';
     taskListContainer.classList.add('taskListContainer');
@@ -88,12 +128,11 @@ function renderTasks() {
         taskContainer.style.backgroundColor = task.taskColor; // Apply the selected color
 
         // Set text color to white if the background color is not white
-        var textColor = task.taskColor && task.taskColor.toLowerCase() !== "#ffffff" ? "white" : "black";
-        taskContainer.style.color = textColor;
+        taskContainer.style.color = task.taskColor && task.taskColor.toLowerCase() !== "#ffffff" ? "white" : "black";
 
         var countdown = getCountdown(task.dueDate);
         var progressPercentage = getProgressPercentage(task.dueDate);
-
+        // Adds a new display for each main task
         taskContainer.innerHTML = `
             <div class="mainTaskOutput">Main Task: ${task.mainTask}, Due Date: ${task.dueDate}, Time Remaining: ${countdown} days left</div>
             <div class="progressBarContainer">
@@ -103,7 +142,7 @@ function renderTasks() {
             <div id="subTaskSection_${taskIndex}" class="subTaskSection">
                 <label><b>Sub Task</b></label>
                 <input type="text" name="subtask" id="subTask_${taskIndex}">
-                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}" onfocus=disableDates("subTaskDate_${taskIndex}")>
+                <input type="date" name="subtaskDate" id="subTaskDate_${taskIndex}" onfocus="disableDates('subTaskDate_${taskIndex}', ${taskIndex})">
                 <button id="addSubTaskButton_${taskIndex}" onclick="addSubTask(${taskIndex})">Add Sub Task</button>
             </div>
         `;
@@ -124,7 +163,7 @@ function renderTasks() {
 
             var countdown = getCountdown(subTaskObj.subTaskDate);
             var progressPercentage = getProgressPercentage(subTaskObj.subTaskDate);
-
+            // Adds a new display for each subtask
             subtaskContainer.innerHTML = `
                 <li>Sub Task: ${subTaskObj.subTask}, Due Date: ${subTaskObj.subTaskDate}, Time Remaining: ${countdown} days left
                     <div class="progressBarContainer">
@@ -143,8 +182,7 @@ function getCountdown(dueDate) {
     var today = new Date();
     var oneDay = 1000 * 60 * 60 * 24;
     var due = new Date(dueDate);
-    var countdown = Math.ceil((due.getTime() - today.getTime()) / oneDay);
-    return countdown;
+    return Math.ceil((due.getTime() - today.getTime()) / oneDay);
 }
 
 function getProgressPercentage(dueDate) {
